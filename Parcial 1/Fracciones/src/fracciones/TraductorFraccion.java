@@ -11,8 +11,8 @@ public class TraductorFraccion {
     public static Fraccion fromString(String input)
     {
         input = input.toLowerCase();
-        Fraccion ret;
         Integer numerador = 0;
+        Integer denominador = 0;
         String trimmed = input.trim();
         String[] numeralSeparator;
         Integer lastSpace = trimmed.lastIndexOf(' ');
@@ -20,7 +20,7 @@ public class TraductorFraccion {
         String denominator = trimmed.substring(lastSpace + 1);
         System.out.println("");
         
-        if(numeral.startsWith("dieci"))
+        if(numeral.startsWith("dieci")) 
         {
             numeral = numeral.replaceAll("dieci", "");
             numerador += 10;
@@ -40,26 +40,68 @@ public class TraductorFraccion {
             numerador += num;
         }
         
-        return new Fraccion(numerador, 0);
+        if(denominator.endsWith("s"))
+        {
+            denominator = denominator.substring(0, denominator.length() - 1);
+        }
+        
+        if(denominator.endsWith("vo"))
+        {
+            denominator = denominator.substring(0, denominator.length() - 2);
+            
+            Integer inNoTrim = unidades.get(denominator);
+            Integer inTrim = unidades.get(denominator.substring(0, denominator.length() - 1));
+            if(inNoTrim != null || inTrim != null)
+            {
+                denominador = inNoTrim != null ? inNoTrim : inTrim;
+            }
+            else if(denominator.indexOf('i', 0) != -1)
+            {
+                Integer index = denominator.indexOf('i', 0);
+                while(denominator.indexOf('i', index) != -1)
+                {
+                    inNoTrim = unidades.get(denominator.substring(index + 1));
+                    if(inNoTrim != null)
+                    {
+                        denominador += unidades.get(denominator.substring(0, index));
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            denominador = unidades.get(denominator);
+        }
+        
+        return new Fraccion(numerador, denominador);
     }
     
     private static final Map<String, Integer> unidades = new HashMap<>();
-    
-    private static final Map<String, Integer> denominadores = new HashMap<>();
     
     static 
     {
         unidades.put("un", 1);
         unidades.put("uno", 1);
+        unidades.put("entero", 1);
         unidades.put("dos", 2);
+        unidades.put("medio", 2);
         unidades.put("tres", 3);
+        unidades.put("tercio", 3);
         unidades.put("cuatro", 4);
+        unidades.put("cuarto", 4);
         unidades.put("cinco", 5);
+        unidades.put("quinto", 5);
         unidades.put("seis", 6);
+        unidades.put("sexto", 6);
         unidades.put("siete", 7);
+        unidades.put("septimo", 7);
         unidades.put("ocho", 8);
+        unidades.put("octavo", 8);
         unidades.put("nueve", 9);
+        unidades.put("noveno", 9);
         unidades.put("diez", 10);
+        unidades.put("decimo", 10);
         unidades.put("once", 11);
         unidades.put("doce", 12);
         unidades.put("trece", 13);
@@ -74,17 +116,6 @@ public class TraductorFraccion {
         unidades.put("ochenta", 80);
         unidades.put("noventa", 90);
         unidades.put("cien", 100);
-        
-        denominadores.put("entero", 1);
-        denominadores.put("medio", 2);
-        denominadores.put("tercio", 3);
-        denominadores.put("cuarto", 4);
-        denominadores.put("quinto", 5);
-        denominadores.put("sexto", 6);
-        denominadores.put("septimo", 7);
-        denominadores.put("octavo", 8);
-        denominadores.put("noveno", 9);
-        denominadores.put("decimo", 10);
-        denominadores.put("centesimo", 100);
+        unidades.put("centesimo", 100);
     }
 }
